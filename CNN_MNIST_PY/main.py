@@ -16,14 +16,14 @@ Y_test = Y_test[:500]
 # Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=10)
 # Y_test = tf.keras.utils.to_categorical(Y_test, num_classes=10)
 
-# Plot the first 9 images
-# for i in range(9):
-#     plt.subplot(330 + 1 + i)
-#     plt.imshow(X_train[i], cmap=plt.get_cmap('gray'))
-#     plt.axis('off')
+#Plot the first 9 images
+for i in range(9):
+    plt.subplot(330 + 1 + i)
+    plt.imshow(X_train[i], cmap=plt.get_cmap('gray'))
+    plt.axis('off')
 
-# # Show the plot
-# plt.show()
+# Show the plot
+plt.show()
 
 # Define the network
 layers = [
