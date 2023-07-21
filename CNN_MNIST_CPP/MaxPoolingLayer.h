@@ -6,7 +6,7 @@
 
 #include "Layer.h"
 
-class MaxPoolingLayer : Layer3 {
+class MaxPoolingLayer : public Layer3D3D {
 private:
     int m_decimation;
 public:
@@ -38,7 +38,7 @@ public:
         return max_pooling_output;
     }
 
-   image3D back_prop(const image3D&image, const image3D& dE_dY) {
+   image3D back_prop(const image3D& image, const image3D& dE_dY) override {
         int image_h = image.size();
         int image_w = image[0].size();
         int channels = image[0][0].size();

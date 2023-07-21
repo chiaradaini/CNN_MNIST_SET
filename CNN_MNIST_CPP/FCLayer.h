@@ -7,20 +7,18 @@
 
 #include "Layer.h"
 
-class FCLayer {
-private:
-    int m_decimation;
+class FCLayer : public Layer1D {
 private:
     int input_units;
     int output_units;
+    double alpha;
     image2D weight;
     image1D bias;
-    image1D flattened_input;
     image1D output;
     image3D original_shape;
 
 public:
-    FCLayer(int input_units, int output_units) : input_units(input_units), output_units(output_units) {
+    FCLayer(int input_units, int output_units, double alpha) : input_units(input_units), output_units(output_units), alpha(alpha) {
         weight.resize(input_units, image1D(output_units, 0.0));
         bias.resize(output_units, 0.0);
         // Initialize weights
@@ -31,16 +29,7 @@ public:
         }
     }
 
-    image1D forward_prop(const image3D& image) {
-        int flattened_size = image.size() * image[0].size() * image[0][0].size();
-        flattened_input.resize(flattened_size, 0.0);
-        for (int i = 0; i < image.size(); ++i) {
-            for (int j = 0; j < image[0].size(); ++j) {
-                for (int k = 0; k < image[0][0].size(); ++k) {
-                    flattened_input[i * image[0].size() * image[0][0].size() + j * image[0][0].size() + k] = image[i][j][k];
-                }
-            }
-        }
+    image1D forward_prop(const image1D& flattened_input) override {
 
         output.resize(output_units, 0.0);
         for (int j = 0; j < output_units; ++j) {
@@ -68,7 +57,7 @@ public:
         return softmax_output;
     }
 
-    image3D back_prop(const image1D& dE_dY, double alpha) {
+    image1D back_prop(const image1D& dE_dY) override {
         image1D dE_dZ(output_units, 0.0);
         for (int i = 0; i < output_units; ++i) {
             if (dE_dY[i] == 0.0) {
@@ -126,21 +115,8 @@ public:
             for (int j = 0; j < output_units; ++j) {
                 bias[j] -= alpha * dE_db[j];
             }
-            
-            int original_shape_h = original_shape.size();
-            int original_shape_w = original_shape[0].size();
-            int original_shape_channels = original_shape[0][0].size();
-            image3D dE_dX_reshaped(original_shape_h, image2D(original_shape_w, image1D(original_shape_channels, 0.0)));
-            size_t index = 0;
-            for (size_t i = 0; i < original_shape_h; ++i) {
-                for (size_t j = 0; j < original_shape_w; ++j) {
-                    for (size_t k = 0; k < original_shape_channels; ++k) {
-                        dE_dX_reshaped[i][j][k] = dE_dX[index++];
-                    }
-                }
-            }
-            
-            return dE_dX_reshaped;
+
+            return dE_dX;
         }
     }
 };

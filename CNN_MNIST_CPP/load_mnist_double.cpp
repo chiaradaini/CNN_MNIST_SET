@@ -1,9 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ConvolutionLayer.h"
-#include "MaxPoolingLayer.h"
-#include "FCLayer.h"
+
 #include "Image.h"
 #include <fstream>
 #include <vector>
@@ -115,6 +113,18 @@ image3D convert_to_dE_dX_reshaped(const image1D& dE_dX, const image3D& original_
     return dE_dX_reshaped;
     }
 
+
+void print_image(const image2D& image) {
+    for (size_t row = 0; row < image.size(); ++row) {
+        for (size_t col = 0; col < image[0].size(); ++col) {
+            double pixel = image[row][col];
+            std::cout << (pixel > 0.5 ? "*" : " "); // Adjust the threshold as needed for visualization
+        }
+        std::cout << std::endl;
+    }
+}
+
+
 int main() {
 
     // Specify the file paths of the MNIST dataset
@@ -129,81 +139,18 @@ int main() {
     image1D Y_train = read_mnist_labels(train_labels_file);
     image1D Y_test = read_mnist_labels(test_labels_file);
 
-    // Normalize pixel values to range [0, 1]
-    //const double normalization_factor = 255.0;
-    //for (auto& row : X_train) {
-    //    for (int& pixel : row) {
-    //        pixel /= normalization_factor;
-    //    }
-    //}
+    // Print the number of images and labels read
+    std::cout << "Number of training images: " << train_images_file.size() << std::endl;
+    std::cout << "Number of training labels: " << train_labels_file.size() << std::endl;
+    std::cout << "Number of test images: " << test_images_file.size() << std::endl;
+    std::cout << "Number of test labels: " << test_labels_file.size() << std::endl;
 
-    //for (auto& row : X_test_int) {
-    //    for (int& pixel : row) {
-    //        pixel /= normalization_factor;
-    //    }
-    //}
-    
-    // Define the Layers
-    ConvolutionLayer conv1(output_channels, kernel_size, alpha);
-    MaxPoolingLayer max_pooling(max_pooling_decimation);
-    FCLayer fc_layer(fc_input_units, fc_output_units, alpha);
+    // Print the first image and its label
+    int image_index = 0;
+    int num_rows = X_train[image_index].size();
+    int num_cols = X_train[image_index][0].size();
 
-
-    // Train the CNN using gradient descent
-    const double learning_rate = 0.01;
-    const int num_epochs = 10;
-
-    for (int epoch = 0; epoch < num_epochs; ++epoch) {
-        for (size_t i = 0; i < X_train.size(); ++i) {
-            // Forward propagation
-            image3D conv_output = conv1.forward_prop(X_train);
-            image3D max_pool_output = max_pooling.forward_prop(conv_output);
-            image1D flatten_output = convert_to_flattened_input(max_pool_output);
-            image1D fc_output = fc_layer.forward_prop(flatten_output);
-    
-            // Convert ground truth label to one-hot vector
-            image1D ground_truth(10, 0.0);
-            ground_truth[Y_train[i]] = 1.0;
-    
-            // Compute the loss and gradient of the loss function
-            image1D dE_dY(fc_output.size(), 0.0);
-            for (int j = 0; j < fc_output.size(); ++j) {
-                dE_dY[j] = 2 * (fc_output[j] - ground_truth[j]);
-            }
-    
-            // Backpropagation
-            image1D dE_dX = fc_layer.back_prop(dE_dY);
-            image3D dE_dX_reshaped = convert_to_dE_dX_reshaped(dE_dX, conv_output);
-            image3D dE_dY_max_pool = max_pooling.back_prop(conv_output, dE_dX_reshaped);
-            image3D dE_dY_conv = conv1.back_prop(dE_dY_max_pool);
-        }
-    }
-
-    // Evaluate the CNN on the test set
-    int correct_predictions = 0;
-    for (size_t i = 0; i < X_test.size(); ++i) {
-        image3D conv_output = conv1.forward_prop(X_test);
-        image3D max_pool_output = max_pooling.forward_prop(conv_output);
-        image1D flatten_output = convert_to_flattened_input(max_pool_output);
-        image1D fc_output = fc_layer.forward_prop(flatten_output);
-
-        // Find the predicted label
-        int predicted_label = 0;
-        double max_prob = fc_output[0];
-        for (int j = 1; j < fc_output.size(); ++j) {
-            if (fc_output[j] > max_prob) {
-                max_prob = fc_output[j];
-                predicted_label = j;
-            }
-        }
-
-        if (predicted_label == Y_test[i]) {
-            correct_predictions++;
-        }
-    }
-
-    double accuracy = static_cast<double>(correct_predictions) / X_test.size() * 100.0;
-    std::cout << "Test accuracy: " << accuracy << "%" << std::endl;
-
+    std::cout << "Label: " << static_cast<int>(Y_train[image_index]) << std::endl;
+    print_image(X_train[image_index]);
     return 0;
 }
