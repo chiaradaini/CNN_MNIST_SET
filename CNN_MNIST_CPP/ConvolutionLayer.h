@@ -52,17 +52,17 @@ public:
 
     image3D back_prop(const image3D& dE_dY) override {
         image3D dE_dk(output_channels, image2D(kernel_size, image1D(kernel_size, 0.0)));
-        for (const auto& patch : patches_generator(kernel_size, image)) {
+        for (const auto& patch : patches_generator(kernel_size, dE_dY)) {
             const auto& patch_image = patch.patch;
             int h = patch.x;
             int w = patch.y;
             int c = patch.z;
-                for (int i = 0; i < kernel_size; ++i) {
-                    for (int j = 0; j < kernel_size; ++j) {
-                        dE_dk[c][i][j] += patch_image[i][j][c] * dE_dY[h][w][c];
-                    }
+            for (int i = 0; i < kernel_size; ++i) {
+                for (int j = 0; j < kernel_size; ++j) {
+                    dE_dk[c][i][j] += patch_image[i][j][c] * dE_dY[h][w][c];
                 }
             }
+        }
 
         // Update the parameters
         for (int f = 0; f < output_channels; ++f) {

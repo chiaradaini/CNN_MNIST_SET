@@ -7,6 +7,7 @@
 #include "Image.h"
 #include <fstream>
 #include <vector>
+#include <iomanip> 
 
 // Define the CNN architecture
 constexpr int input_channels = 1; // MNIST images are grayscale, so only one channel
@@ -115,7 +116,33 @@ image3D convert_to_dE_dX_reshaped(const image1D& dE_dX, const image3D& original_
     return dE_dX_reshaped;
     }
 
+image4D reshape_to_batch(const image3D& X_train) {
+    int num_images = X_train.size();
+    int image_height = X_train[0].size();
+    int image_width = X_train[0][0].size();
+
+    // Initialize the batch with zeros
+    image4D batch(num_images, image3D(image_height, image2D(image_width, image1D(1, 0.0))));
+
+    // Copy each image from X_train to the batch
+    for (int i = 0; i < num_images; ++i) {
+        for (int h = 0; h < image_height; ++h) {
+            for (int w = 0; w < image_width; ++w) {
+                batch[i][h][w][0] = X_train[i][h][w];
+            }
+        }
+    }
+
+    return batch;
+}
+
+
 int main() {
+
+    // Define the number of images to select from the train and test sets
+    constexpr int num_train_images_to_select = 2500;
+    constexpr int num_test_images_to_select = 500;
+
 
     // Specify the file paths of the MNIST dataset
     std::string train_images_file = "train-images-idx3-ubyte.gz";
@@ -142,6 +169,18 @@ int main() {
     //        pixel /= normalization_factor;
     //    }
     //}
+
+    // Select the specified number of images from the train set
+    if (num_train_images_to_select < X_train.size()) {
+        X_train.resize(num_train_images_to_select);
+        Y_train.resize(num_train_images_to_select);
+    }
+
+    // Select the specified number of images from the test set
+    if (num_test_images_to_select < X_test.size()) {
+        X_test.resize(num_test_images_to_select);
+        Y_test.resize(num_test_images_to_select);
+    }
     
     // Define the Layers
     ConvolutionLayer conv1(output_channels, kernel_size, alpha);
@@ -153,10 +192,15 @@ int main() {
     const double learning_rate = 0.01;
     const int num_epochs = 10;
 
+    image4D batch = reshape_to_batch(X_train);
+
     for (int epoch = 0; epoch < num_epochs; ++epoch) {
-        for (size_t i = 0; i < X_train.size(); ++i) {
+        int total_correct_predictions = 0;
+        double total_loss = 0.0;
+        for (size_t i = 0; i < batch.size(); ++i) {
+
             // Forward propagation
-            image3D conv_output = conv1.forward_prop(X_train);
+            image3D conv_output = conv1.forward_prop(batch[i]);
             image3D max_pool_output = max_pooling.forward_prop(conv_output);
             image1D flatten_output = convert_to_flattened_input(max_pool_output);
             image1D fc_output = fc_layer.forward_prop(flatten_output);
@@ -171,18 +215,49 @@ int main() {
                 dE_dY[j] = 2 * (fc_output[j] - ground_truth[j]);
             }
     
-            // Backpropagation
+            // Backward propagation
             image1D dE_dX = fc_layer.back_prop(dE_dY);
             image3D dE_dX_reshaped = convert_to_dE_dX_reshaped(dE_dX, conv_output);
             image3D dE_dY_max_pool = max_pooling.back_prop(conv_output, dE_dX_reshaped);
             image3D dE_dY_conv = conv1.back_prop(dE_dY_max_pool);
-        }
+
+            // Calculate the accuracy and loss
+            int predicted_label = 0;
+            double max_prob = fc_output[0];
+            for (int j = 1; j < fc_output.size(); ++j) {
+                if (fc_output[j] > max_prob) {
+                    max_prob = fc_output[j];
+                    predicted_label = j;
+                }
+            }
+
+            if (predicted_label == Y_train[i]) {
+                total_correct_predictions++;
+            }
+
+            // Mean Squared Error (MSE) Loss function
+            double loss = 0.0;
+            for (int j = 0; j < fc_output.size(); ++j) {
+                double error = fc_output[j] - ground_truth[j];
+                loss += error * error;
+            }
+            total_loss += loss;
+
+            // Display accuracy and loss every 100 images
+            if ((i + 1) % 100 == 0) {
+                double accuracy = static_cast<double>(total_correct_predictions) / (i + 1) * 100.0;
+                double average_loss = total_loss / (i + 1);
+                std::cout << "Epoch: " << epoch + 1 << ", Images: " << i + 1;
+                std::cout << ", Accuracy: " << std::fixed << std::setprecision(2) << accuracy << "%";
+                std::cout << ", Loss: " << std::fixed << std::setprecision(4) << average_loss << std::endl;
+            }
+        }   
     }
 
     // Evaluate the CNN on the test set
     int correct_predictions = 0;
-    for (size_t i = 0; i < X_test.size(); ++i) {
-        image3D conv_output = conv1.forward_prop(X_test);
+    for (size_t i = 0; i < batch.size(); ++i) {
+        image3D conv_output = conv1.forward_prop(batch[i]);
         image3D max_pool_output = max_pooling.forward_prop(conv_output);
         image1D flatten_output = convert_to_flattened_input(max_pool_output);
         image1D fc_output = fc_layer.forward_prop(flatten_output);
