@@ -9,17 +9,16 @@
 #include "Layer.h"
 
 
-class ConvolutionLayer : Layer3 {
-private:
-    int m_decimation;
+class ConvolutionLayer : public Layer3D {
 private:
     int output_channels;
     int kernel_size;
+    double alpha;
     image3D kernels;
     image3D image;
 
 public:
-    ConvolutionLayer(int output_channels, int kernel_size) : output_channels(output_channels), kernel_size(kernel_size) {
+    ConvolutionLayer(int output_channels, int kernel_size, double alpha) : output_channels(output_channels), kernel_size(kernel_size), alpha(alpha) {
         kernels.resize(output_channels, image2D(kernel_size, image1D(kernel_size, 0.0)));
         // Generate random filters
         for (int f = 0; f < output_channels; ++f) {
@@ -31,12 +30,12 @@ public:
         }
     }
 
-    image3D forward_prop(const image3D& image) {
+    image3D forward_prop(const image3D& image) override {
         int image_h = image.size();
         int image_w = image[0].size();
         int input_channels = image[0][0].size();
         image3D convolution_output(image_h - kernel_size + 1, image2D(image_w - kernel_size + 1, image1D(output_channels, 0.0)));
-        for (const auto& patch : patches_generator(m_decimation, image)) {
+        for (const auto& patch : patches_generator(kernel_size, image)) {
             const auto& patch_image = patch.patch;
             int h = patch.x;
             int w = patch.y;
@@ -51,19 +50,19 @@ public:
         return convolution_output;
     }
 
-    image3D back_prop(const image3D& dE_dY, double alpha) {
+    image3D back_prop(const image3D& dE_dY) override {
         image3D dE_dk(output_channels, image2D(kernel_size, image1D(kernel_size, 0.0)));
-        for (const auto& patch : patches_generator(m_decimation, image)) {
+        for (const auto& patch : patches_generator(kernel_size, dE_dY)) {
             const auto& patch_image = patch.patch;
             int h = patch.x;
             int w = patch.y;
             int c = patch.z;
-                for (int i = 0; i < kernel_size; ++i) {
-                    for (int j = 0; j < kernel_size; ++j) {
-                        dE_dk[c][i][j] += patch_image[i][j][c] * dE_dY[h][w][c];
-                    }
+            for (int i = 0; i < kernel_size; ++i) {
+                for (int j = 0; j < kernel_size; ++j) {
+                    dE_dk[c][i][j] += patch_image[i][j][c] * dE_dY[h][w][c];
                 }
             }
+        }
 
         // Update the parameters
         for (int f = 0; f < output_channels; ++f) {
