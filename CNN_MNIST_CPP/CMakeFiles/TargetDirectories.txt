@@ -1,0 +1,6 @@
+/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/CMakeFiles/test_convlayer.dir
+/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/CMakeFiles/test_maxpoollayer.dir
+/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/CMakeFiles/test_FClayer.dir
+/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/CMakeFiles/test.dir
+/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/CMakeFiles/edit_cache.dir
+/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/CMakeFiles/rebuild_cache.dir

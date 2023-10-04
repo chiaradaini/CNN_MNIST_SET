@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/test_convlayer.dir/test_convlayer.cpp.o -o test_convlayer  -lgtest -lgtest_main -lpthread 

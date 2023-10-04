@@ -1,0 +1,10 @@
+{
+    "C_Cpp.default.includePath": [
+        "/usr/local/cuda/include"  // This should be the path to your CUDA include directory
+    ],
+    "files.associations": {
+        "iostream": "cpp",
+        "cmath": "cpp",
+        "ios": "cpp"
+    }
+}

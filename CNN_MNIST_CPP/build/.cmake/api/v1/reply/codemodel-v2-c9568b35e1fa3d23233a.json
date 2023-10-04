@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "CNN_INFERENCE",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "test_FClayer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_FClayer-Debug-609d97508a514c2ba62d.json",
+					"name" : "test_FClayer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_convlayer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_convlayer-Debug-5918d37628ab90d1eac7.json",
+					"name" : "test_convlayer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "test_maxpoollayer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-test_maxpoollayer-Debug-93f47c7c2fd431d82859.json",
+					"name" : "test_maxpoollayer",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/build",
+		"source" : "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

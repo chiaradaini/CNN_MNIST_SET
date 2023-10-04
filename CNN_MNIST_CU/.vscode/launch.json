@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "nvcc build",
+            "type": "shell",
+            "command": "nvcc",
+            "args": [
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.exe",
+                "${file}"
+            ],
+            "problemMatcher": []
+        }
+    ],
+    "configurations": [
+    ]
+}

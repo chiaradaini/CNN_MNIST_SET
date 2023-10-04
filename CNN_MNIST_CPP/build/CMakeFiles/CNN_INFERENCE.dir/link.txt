@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/CNN_INFERENCE.dir/cnn_inference.cpp.o -o CNN_INFERENCE 

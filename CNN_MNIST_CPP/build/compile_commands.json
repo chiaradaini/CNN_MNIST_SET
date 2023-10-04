@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/build",
+  "command": "/usr/bin/g++  -I/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/googletest/include -g -std=gnu++14 -o CMakeFiles/test_convlayer.dir/test_convlayer.cpp.o -c /home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/test_convlayer.cpp",
+  "file": "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/test_convlayer.cpp"
+},
+{
+  "directory": "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/build",
+  "command": "/usr/bin/g++  -I/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/googletest/include -g -std=gnu++14 -o CMakeFiles/test_maxpoollayer.dir/test_maxpoollayer.cpp.o -c /home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/test_maxpoollayer.cpp",
+  "file": "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/test_maxpoollayer.cpp"
+},
+{
+  "directory": "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/build",
+  "command": "/usr/bin/g++  -I/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/googletest/include -g -std=gnu++14 -o CMakeFiles/test_FClayer.dir/test_FClayer.cpp.o -c /home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/test_FClayer.cpp",
+  "file": "/home/cdaini/Desktop/Sycomores/MyVGG/CNN_MNIST_CPP/test_FClayer.cpp"
+}
+]

@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/test_FClayer.dir/test_FClayer.cpp.o -o test_FClayer  -lgtest -lgtest_main -lpthread 
