@@ -13,6 +13,9 @@
 #include <cassert>
 #include <algorithm>
 #include <iomanip>
+#include <pthread.h>
+#include <sched.h>
+#include "Results.h"
 
 // Define the CNN architecture
 constexpr int kernel_size = 3;
@@ -21,8 +24,21 @@ constexpr int max_pooling_decimation = 2; // Decimation rate for max pooling
 constexpr int fc_input_units = 16 * 13 * 13; // Input units for the fully connected layer
 constexpr int fc_output_units = 10; // Output units for the fully connected layer
 constexpr double alpha = 0.01; //learning rate
+constexpr int num_blocks = 50;
 
 int main() {
+
+    // Set the scheduling policy to SCHED_FIFO (or SCHED_RR for round-robin)
+    int policy = SCHED_FIFO;
+    struct sched_param param;
+    param.sched_priority = 99;  // Set the priority (0-99, 99 being the highest)
+
+    // Set the scheduling policy and priority for the current thread (main thread)
+    if (pthread_setschedparam(pthread_self(), policy, &param) != 0) {
+        perror("pthread_setschedparam");
+        // Handle the error if setting priority fails
+        return 1;
+    }
 
     constexpr int num_test_images_to_select = 1;
 
@@ -41,10 +57,16 @@ int main() {
     }
 
     // Load pre-trained weights, biases, and kernels
-    image2D flattened_kernels = read_csv("kernels_training.csv");
+    image2D flattened_kernels_1 = read_csv("kernels_training.csv");
     image2D weights = read_csv("weights_training.csv");
     image1D biases = read_csv_image1D("biases_training.csv");
-    image3D kernels = reshape_to_3d(flattened_kernels, output_channels, kernel_size);
+    image3D kernels = reshape_to_3d(flattened_kernels_1, output_channels, kernel_size);
+    image1D flattened_kernels = convert_to_flattened_input(kernels);
+
+    // Copy kernels to the GPU
+    double* dev_flattened_kernels;
+    cudaMalloc((void**)&dev_flattened_kernels, flattened_kernels.size() * sizeof(double));
+    cudaMemcpy(dev_flattened_kernels, flattened_kernels.data(), flattened_kernels.size() * sizeof(double), cudaMemcpyHostToDevice);
 
     // Define the Layers
     MaxPoolingLayer max_pooling(max_pooling_decimation);
@@ -52,14 +74,17 @@ int main() {
 
     image4D batch_test = reshape_to_batch(X_test);
 
+    std::vector<float> executionTimes;
+
     // Evaluate the CNN on the test set
     int correct_predictions = 0;
     for (size_t i = 0; i < batch_test.size(); ++i) {
-	for ( int num = 1; num < 11; ++num) {
-	int numBlocks = num;
-
-        image3D conv_output = conv_forward_prop(batch_test[i], kernels, numBlocks);
-	    image3D max_pool_output = max_pooling.forward_prop(conv_output);
+	for ( int num = 1; num < num_blocks; ++num) {
+        ConvolutionResult result = conv_forward_prop(batch_test[i], dev_flattened_kernels, kernel_size, output_channels, num);
+	image3D conv_output = result.conv_output;
+	float milliseconds = result.milliseconds;
+	executionTimes.push_back(milliseconds);
+	image3D max_pool_output = max_pooling.forward_prop(conv_output);
         image1D flatten_output = convert_to_flattened_input(max_pool_output);
         image1D fc_output = fc_layer.forward_prop(flatten_output);
 
@@ -70,6 +95,11 @@ int main() {
         }
 	}
     }
+
+    cudaFree(dev_flattened_kernels);
+
+    std::string csvFilePath = "execution_times.csv";
+    saveExecutionTimesToCSV(executionTimes, csvFilePath);
 
     double accuracy = static_cast<double>(correct_predictions) / X_test.size() * 100.0;
     //std::cout << "Test accuracy: " << accuracy << "%" << std::endl;

@@ -5,6 +5,7 @@
     "files.associations": {
         "iostream": "cpp",
         "cmath": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "cstdlib": "cpp"
     }
 }

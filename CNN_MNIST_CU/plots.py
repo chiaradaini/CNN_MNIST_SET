@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
 
 input_w = 28
 input_h = 28
@@ -8,30 +9,50 @@ output_w = input_w - kernel_size + 1
 output_h = input_h - kernel_size + 1
 output_channels = 16
 
-num_blocks_max = 11
+# Initialize an empty list to store the values
+execution_times_FIFO = []
 
-# Sample data (replace with your actual data)
-#execution_times = [0.05, 0.02, 0.02, 0.17, 0.16, 0.15, 0.13, 0.13, 0.14, 0.14, 0.15, 0.21, 0.16, 0.16, 0.16, 0.16, 0.18, 0.15, 0.14, 0.18, 0.13, 0.19, 0.13, 0.27, 0.16, 0.19, 0.24, 0.17, 0.19, 0.16, 0.24, 0.17, 0.19, 0.20, 0.16, 0.18, 0.16, 0.16, 0.16, 0.18, 0.17, 0.18, 0.16, 0.17, 0.24, 0.17, 0.22, 0.18, 0.19]
-execution_times = [0.02, 0.04, 0.05, 0.17, 0.16, 0.15, 0.14, 0.13, 0.14, 0.14]
+# Open the CSV file for reading
+with open('execution_times.csv', 'r') as csvfile:
+    # Create a CSV reader
+    csvreader = csv.reader(csvfile)
+    
+    # Iterate through the rows in the CSV file
+    for row in csvreader:
+        # Assuming your numerical values are in the first column (index 0)
+        value = float(row[0])
+        
+        # Append the value to the list
+        execution_times_FIFO.append(value)
+
+num_blocks_max = len(execution_times_FIFO)
+
+execution_times = [0.05, 0.02, 0.02, 0.17, 0.16, 0.15, 0.13, 0.13, 0.14, 0.14, 0.15, 0.21, 0.16, 0.16, 0.16, 0.16, 0.18, 0.15, 0.14, 0.18, 0.13, 0.19, 0.13, 0.27, 0.16, 0.19, 0.24, 0.17, 0.19, 0.16, 0.24, 0.17, 0.19, 0.20, 0.16, 0.18, 0.16, 0.16, 0.16, 0.18, 0.17, 0.18, 0.16, 0.17, 0.24, 0.17, 0.22, 0.18, 0.19]
+#execution_times_10 = [0.02, 0.04, 0.05, 0.17, 0.16, 0.15, 0.14, 0.13, 0.14, 0.14]
                    
-num_blocks = np.arange(1, num_blocks_max)  # Convert to NumPy array
+num_blocks = np.arange(1, num_blocks_max+1)  # Convert to NumPy array
 
 # Calculate the number of threads per block
-# threads = (output_w + num_blocks - 1) // num_blocks  # Use // for integer division
 threads_x = (output_w + num_blocks - 1) // num_blocks
-threads_y = (output_h + num_blocks - 1) // num_blocks
+threads_y = (output_h + num_blocks - 1) // num_blocks 
 threads_z = output_channels
 threads = threads_x * threads_y * threads_z
+
+# Ensure that both lists have the same length
+if len(execution_times_FIFO) != len(execution_times):
+    raise ValueError("Both lists must have the same length")
 
 # Create two subplots
 plt.figure(figsize=(12, 5))
 
 # Subplot 1: Number of Blocks vs. Execution Time
 plt.subplot(1, 2, 1)
-plt.plot(num_blocks, execution_times, marker='o')
+plt.plot(num_blocks, execution_times_FIFO, marker='o', label='execution_times_FIFO')
+plt.plot(num_blocks, execution_times, marker='o', label='execution_times')
 plt.xlabel("Number of Blocks")
 plt.ylabel("Execution Time (ms)")
 plt.title("Execution Time vs. Number of Blocks")
+plt.legend()  # Add a legend to differentiate the two lines
 
 # Subplot 2: Number of Blocks vs. Threads per Block
 plt.subplot(1, 2, 2)
