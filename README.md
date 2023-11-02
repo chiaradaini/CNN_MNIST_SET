@@ -2,7 +2,13 @@
 
 **Description:**
 
-This project implements a Convolutional Neural Network (CNN) on NVIDIA CUDA. It includes a convolution layer, max-pooling layer, and a fully connected layer for image classification tasks. The project is designed to process the MNIST dataset and make predictions.
+This project implements a Convolutional Neural Network (CNN) on NVIDIA CUDA, using C++ and Python. It includes a convolution layer, max-pooling layer, and a fully connected layer for image classification tasks. The project is designed to process the MNIST dataset and make predictions.
+
+The project is organized into three main folders:
+
+- `CNN_MNIST_CPP`: Contains the C++ code implementation.
+- `CNN_MNIST_PY`:  Contains the Python code implementation.
+- `CNN_MNIST_CU`:  Contains the CUDA code implementation.
 
 ## Table of Contents
 
@@ -10,9 +16,6 @@ This project implements a Convolutional Neural Network (CNN) on NVIDIA CUDA. It 
 2. [Getting Started](#getting-started)
 3. [Project Structure](#project-structure)
 4. [Usage](#usage)
-5. [Performance Considerations](#performance-considerations)
-6. [Contributing](#contributing)
-7. [License](#license)
 
 ## Prerequisites
 
@@ -28,3 +31,14 @@ This project implements a Convolutional Neural Network (CNN) on NVIDIA CUDA. It 
    ```bash
    git clone https://github.com/yourusername/your-cuda-cnn-project.git
    cd your-cuda-cnn-project
+
+## Project Structure
+
+...
+
+## Usage
+
+...
+
+
+
