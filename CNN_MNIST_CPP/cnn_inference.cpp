@@ -58,7 +58,14 @@ int main() {
     // Evaluate the CNN on the test set
     int correct_predictions = 0;
     for (size_t i = 0; i < batch_test.size(); ++i) {
+
+        int input_h = batch_test[i][0].size();
+        int input_w = batch_test[i][0][0].size();
+        int output_h = input_h - kernel_size + 1;
+        int output_w = input_w - kernel_size + 1;
+
         image3D conv_output = conv1.forward_prop(batch_test[i]);
+        print_kernels(conv_output);
         image3D max_pool_output = max_pooling.forward_prop(conv_output);
         image1D flatten_output = convert_to_flattened_input(max_pool_output);
         image1D fc_output = fc_layer.forward_prop(flatten_output);
