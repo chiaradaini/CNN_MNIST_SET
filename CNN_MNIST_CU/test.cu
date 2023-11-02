@@ -1,10 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ConvolutionLayer.cu"
+#include "ConvolutionLayerGranularity.cu"
 #include "Image.h"
 #include "Functions.h"
-#include <fstream>
 #include <vector>
 #include <iomanip>
 #include <chrono>
@@ -13,57 +12,78 @@
 #include <iomanip>
 
 int main() {
-	
-    int blocks = 2 ;
 
-    // Create a 3x3 matrix
-    image3D image(3, image2D(3, image1D(1, 0.0)));
+    int taglia = 3;
 
-    // Initialize the matrix with numbers from 1 to 9
-    double num = 0.0;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            for (int k = 0;k < 1; k++) {
-                image[i][j][k] = num;
-                num++;
-            }
+    image3D image(taglia, image2D(taglia, image1D(1, 0.0)));
+
+    int num = 0;
+    for (int i = 0; i < taglia; i++) {
+        for (int j = 0; j < taglia; j++) {
+            image[i][j][0] = num;
+            num++;
         }
     }
 
-//    image3D conv_output = conv_forward_prop(image, kernel, blocks);
+    // // Print the matrix
+    // std::cout << "Image:" << std::endl;
+    // for (int i = 0; i < taglia; i++) {
+    //     for (int j = 0; j < taglia; j++) {
+    //         std::cout << image[i][j][0] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
     // Define the kernel size and number of channels
     int kernel_size = 2;
     int num_channels = 3;
+    std::vector<float> executionTimes;
 
     // Create a 3D vector to represent the kernel
     std::vector<std::vector<std::vector<double>>> kernel(num_channels,
                                                          std::vector<std::vector<double>>(kernel_size,
-                                                                                           std::vector<double>(kernel_size, 0.0)));
+                                                           std::vector<double>(kernel_size, 0.0)));
 
-    // Initialize the kernel with some values (you can set your desired values here)
+    // Initialize the kernel with some values
     double nums = 0.0;
     for (int c = 0; c < num_channels; ++c) {
         for (int i = 0; i < kernel_size; ++i) {
             for (int j = 0; j < kernel_size; ++j) {
-                // Set your values here, for example:
                 kernel[c][i][j] = nums;
-		nums ++;
+                nums++;
             }
         }
     }
 
-    // Print the kernel
-    for (int c = 0; c < num_channels; ++c) {
-        std::cout << "Channel " << c << ":\n";
-        for (int i = 0; i < kernel_size; ++i) {
-            for (int j = 0; j < kernel_size; ++j) {
-                std::cout << kernel[c][i][j] << " ";
-            }
-            std::cout << "\n"; // Newline after each row
-        }
-    }
+    // //Print the kernel
+    // std::cout << "Kernel:" << std::endl;
+    // for (int c = 0; c < num_channels; ++c) {
+    //     for (int i = 0; i < kernel_size; ++i) {
+    //         for (int j = 0; j < kernel_size; ++j) {
+    //             std::cout << kernel[c][i][j] << " ";
+    //         }
+    //         std::cout << "\n"; // Newline after each row
+    //     }
+    // }
 
+    // Prepare the kernel for GPU processing
+    image1D flattened_kernels = convert_to_flattened_input(kernel);
+    double* dev_flattened_kernels;
+    cudaMalloc((void**)&dev_flattened_kernels, flattened_kernels.size() * sizeof(double));
+    cudaMemcpy(dev_flattened_kernels, flattened_kernels.data(), flattened_kernels.size() * sizeof(double), cudaMemcpyHostToDevice);
 
-	image3D conv_output = conv_forward_prop(image, kernel, blocks);
+    int numBlocks =1;
+    int numThreads = 32;
+    int granularity = 2;
+
+    ConvolutionResult result = conv_forward_prop(image, dev_flattened_kernels, kernel_size, num_channels, numBlocks, numThreads, granularity);
+    image3D conv_output = result.conv_output;
+
+    print_kernels(result.conv_output);
+    float milliseconds = result.milliseconds;
+    executionTimes.push_back(milliseconds);
+
+    cudaFree(dev_flattened_kernels);
+
     return 0;
 }

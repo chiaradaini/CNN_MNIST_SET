@@ -22,6 +22,7 @@ __global__ void convolution(const double* input,
                             int output_w,
                             int input_channels,
                             int output_channels,
+                            int granularity,
                             double* conv_output) {
 
     int c = blockIdx.x * blockDim.x + threadIdx.x;
@@ -39,28 +40,30 @@ __global__ void convolution(const double* input,
 
         double sum = 0.0;
 
-        for (int i = 0; i < kernel_size; ++i) {
-            for (int j = 0; j < kernel_size; ++j) {
-                for (int k = 0; k < input_channels; ++k) {
-                    // Calculate input and kernel indices correctly
-                    int input_idx = (h + i) * input_w * input_channels + (w + j) * input_channels + k;
-                    int kernel_idx = c_channel * (kernel_size * kernel_size * input_channels) + i * (kernel_size * input_channels) + j * input_channels + k;
+        for (int g = 0; g < granularity; g++){
+            for (int i = 0; i < kernel_size; ++i) {
+                for (int j = 0; j < kernel_size; ++j) {
+                    for (int k = 0; k < input_channels; ++k) {
+                        // Calculate input and kernel indices correctly
+                        int input_idx = (h + i) * input_w * input_channels + (w + j) * input_channels + k;
+                        int kernel_idx = c_channel * (kernel_size * kernel_size * input_channels) + i * (kernel_size * input_channels) + j * input_channels + k;
 
-                    double input_pixel = input[input_idx];
-                    double kernel_value = kernels[kernel_idx];
-                    sum += input_pixel * kernel_value;
-                    //printf("c = %d, i = %d, j = %d, k = %d, input_idx = %d, input_pixel = %f, kernel_idx = %d, kernel_value = %f, sum = %f\n", c, i, j, k, input_idx, input_pixel, kernel_idx, kernel_value, sum);
+                        double input_pixel = input[input_idx];
+                        double kernel_value = kernels[kernel_idx];
+                        sum += input_pixel * kernel_value;
+                        //printf("c = %d, i = %d, j = %d, k = %d, input_idx = %d, input_pixel = %f, kernel_idx = %d, kernel_value = %f, sum = %f\n", c, i, j, k, input_idx, input_pixel, kernel_idx, kernel_value, sum);
+                    }
                 }
             }
+            printf("c = %d, c * granularity + g = %d, sum = %f\n", c, (c * granularity + g), sum);
+            // unsigned long micro_add = (end_add - start_add) * 1000000 / CLOCKS_PER_SEC;
+            // printf("start = %llu, end = %llu, elapsed time = %llu [micro s]\n", start_add, end_add, micro_add);
+            conv_output[c * granularity + g] = sum;
         }
-        //printf("c = %d, sum = %f\n", c, sum);
-        // unsigned long micro_add = (end_add - start_add) * 1000000 / CLOCKS_PER_SEC;
-		// printf("start = %llu, end = %llu, elapsed time = %llu [micro s]\n", start_add, end_add, micro_add);
-        conv_output[c] = sum;
     }
 }
 
-ConvolutionResult conv_forward_prop(const image3D& input, const double* dev_kernels, const int& kernel_size, const int& output_channels, const int& numBlocks, const int& numThreads) {
+ConvolutionResult conv_forward_prop(const image3D& input, const double* dev_kernels, const int& kernel_size, const int& output_channels, const int& numBlocks, const int& numThreads, const int& granularity) {
     ConvolutionResult result;
     double *dev_conv_output;
     int input_h = input.size();
@@ -86,7 +89,7 @@ ConvolutionResult conv_forward_prop(const image3D& input, const double* dev_kern
     CUDA_CHECK(cudaEventRecord(start));
 
     convolution<<<numBlocks, numThreads>>>(dev_flattened_input, dev_kernels, kernel_size,
-                                                input_h, input_w, output_h, output_w, input_channels, output_channels, dev_conv_output);
+                                                input_h, input_w, output_h, output_w, input_channels, output_channels, granularity, dev_conv_output);
 
 
     CUDA_CHECK(cudaEventRecord(stop));

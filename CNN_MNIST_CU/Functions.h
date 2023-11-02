@@ -306,14 +306,14 @@ double calculate_accuracy(const image1D& predicted_labels, const image1D& ground
 }
 
 
-image3D convertTo3D(const std::vector<double>& input, int output_h, int output_w, int output_channels) {
+image3D convertTo3D(const std::vector<double>& input, int output_channels, int output_h, int output_w) {
     if (input.size() != output_h * output_w * output_channels) {
         // Check if the input vector size matches the desired 3D dimensions
         throw std::invalid_argument("Input vector size doesn't match the desired 3D dimensions.");
     }
 
     // Initialize the 3D vector with zeros
-    image3D output(output_h, std::vector<std::vector<double>>(output_w, std::vector<double>(output_channels, 0.0)));
+    image3D output(output_h, image2D(output_w, image1D(output_channels, 0.0)));
 
     // Fill the 3D vector with values from the input vector
     int index = 0;
@@ -326,5 +326,31 @@ image3D convertTo3D(const std::vector<double>& input, int output_h, int output_w
     }
 
     return output;
+}
+
+// Function to save execution times to a CSV file
+void saveExecutionTimesToCSV(const std::vector<float>& executionTimes, const std::string& csvFilePath) {
+    // Open the CSV file for writing
+    std::ofstream csvFile(csvFilePath);
+
+    // Check if the file was opened successfully
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open CSV file for writing." << std::endl;
+        return; // Return without saving if there was an error
+    }
+
+    // Loop through the executionTimes vector and write each value to the CSV file
+    for (float time : executionTimes) {
+        // Convert the float to a string with two decimal places
+        std::ostringstream stream;
+        stream << std::fixed << std::setprecision(2) << time;
+        std::string timeStr = stream.str();
+
+        // Write the formatted string to the CSV file
+        csvFile << timeStr << std::endl;
+    }
+
+    // Close the CSV file
+    csvFile.close();
 }
 #endif // FUNCTIONS_H
