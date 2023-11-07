@@ -19,10 +19,9 @@ The project is organized into three main folders:
 
 ## Prerequisites
 
-- CUDA Toolkit (Version X.X)
-- NVIDIA GPU with Compute Capability X.X
+- CUDA Toolkit (Version 10.2): The project relies on CUDA for GPU acceleration. You'll need to install the CUDA Toolkit to compile and run the CUDA code. Visit the [NVIDIA CUDA Toolkit page](https://developer.nvidia.com/cuda-toolkit) for installation instructions.
 - C++ Compiler
-- Dependencies (e.g., "ConvolutionLayer.cu", "MaxPoolingLayer.h", "FCLayer.h", "Image.h", "Functions.h", etc.)
+- GPU NVIDIA Jetson Xavier: The project is designed to run on NVIDIA Jetson Xavier or other compatible GPUs. Ensure you have access to this hardware.
 
 ## Getting Started
 
@@ -30,7 +29,7 @@ The project is organized into three main folders:
 
    ```bash
    git clone https://github.com/yourusername/your-cuda-cnn-project.git
-   cd your-cuda-cnn-project
+   cd your-cuda-cnn-project/CNN_MNIST_CU
 
 ## Project Structure
 
