@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ConvolutionLayer.h"
+#include "ConvolutionLayerGranularity.cu"
 #include "Image.h"
 #include "Functions.h"
 #include <vector>
@@ -10,13 +10,6 @@
 #include <cassert>
 #include <algorithm>
 #include <iomanip>
-
-// Define the CNN architecture
-constexpr int input_channels = 1; // MNIST images are grayscale, so only one channel
-constexpr int kernel_size = 2;
-constexpr int output_channels = 3; // Number of output channels for convolution layer
-constexpr double alpha = 0.01; //learning rate
-
 
 int main() {
 
@@ -73,10 +66,24 @@ int main() {
     //     }
     // }
 
+    // Prepare the kernel for GPU processing
+    image1D flattened_kernels = convert_to_flattened_input(kernel);
+    double* dev_flattened_kernels;
+    cudaMalloc((void**)&dev_flattened_kernels, flattened_kernels.size() * sizeof(double));
+    cudaMemcpy(dev_flattened_kernels, flattened_kernels.data(), flattened_kernels.size() * sizeof(double), cudaMemcpyHostToDevice);
 
-    ConvolutionLayer conv1(output_channels, kernel_size, alpha, kernel);
-    image3D conv_output = conv1.forward_prop(image);
-    print_kernels(conv_output);
+    int numBlocks =1;
+    int numThreads = 32;
+    int granularity = 2;
+
+    ConvolutionResult result = conv_forward_prop(image, dev_flattened_kernels, kernel_size, num_channels, numBlocks, numThreads, granularity);
+    image3D conv_output = result.conv_output;
+
+    print_kernels(result.conv_output);
+    float milliseconds = result.milliseconds;
+    executionTimes.push_back(milliseconds);
+
+    cudaFree(dev_flattened_kernels);
 
     return 0;
 }

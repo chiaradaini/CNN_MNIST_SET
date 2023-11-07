@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ConvolutionLayerGranularity.cu"
+#include "ConvolutionLayer.cu"
 #include "Image.h"
 #include "Functions.h"
 #include <vector>
@@ -74,9 +74,8 @@ int main() {
 
     int numBlocks =1;
     int numThreads = 32;
-    int granularity = 2;
 
-    ConvolutionResult result = conv_forward_prop(image, dev_flattened_kernels, kernel_size, num_channels, numBlocks, numThreads, granularity);
+    ConvolutionResult result = conv_forward_prop(image, dev_flattened_kernels, kernel_size, num_channels, numBlocks, numThreads);
     image3D conv_output = result.conv_output;
 
     print_kernels(result.conv_output);

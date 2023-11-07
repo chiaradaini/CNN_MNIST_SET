@@ -35,7 +35,7 @@ __global__ void convolution(const double* input,
         int remainder = c % (output_h * output_w);
         int w = remainder % (output_w);
         int h = remainder / (output_w);
-        //printf("c = %d, c_channel = %d, remainder = %d, w = %d, h = %d\n", c, c_channel, remainder, w, h);
+        printf("c = %d, c_channel = %d, remainder = %d, w = %d, h = %d\n", c, c_channel, remainder, w, h);
 
         double sum = 0.0;
 
@@ -49,7 +49,7 @@ __global__ void convolution(const double* input,
                     double input_pixel = input[input_idx];
                     double kernel_value = kernels[kernel_idx];
                     sum += input_pixel * kernel_value;
-                    //printf("c = %d, i = %d, j = %d, k = %d, input_idx = %d, input_pixel = %f, kernel_idx = %d, kernel_value = %f, sum = %f\n", c, i, j, k, input_idx, input_pixel, kernel_idx, kernel_value, sum);
+                    printf("c = %d, i = %d, j = %d, k = %d, input_idx = %d, input_pixel = %f, kernel_idx = %d, kernel_value = %f, sum = %f\n", c, i, j, k, input_idx, input_pixel, kernel_idx, kernel_value, sum);
                 }
             }
         }
@@ -94,7 +94,7 @@ ConvolutionResult conv_forward_prop(const image3D& input, const double* dev_kern
 
     float milliseconds = 0.0;
     CUDA_CHECK(cudaEventElapsedTime(&milliseconds, start, stop));
-    printf("Kernel execution time: %.2f ms\n", milliseconds);
+    //printf("Kernel execution time: %.2f ms\n", milliseconds);
 
     cudaEventDestroy(start);
     cudaEventDestroy(stop);
