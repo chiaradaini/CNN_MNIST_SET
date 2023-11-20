@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ConvolutionLayer.cu"
+#include "ConvolutionLayerGranularity.cu"
 #include "MaxPoolingLayer.h"
 #include "FCLayer.h"
 #include "Image.h"
@@ -26,7 +26,7 @@ constexpr int fc_output_units = 10; // Output units for the fully connected laye
 constexpr double alpha = 0.01; // Learning rate
 constexpr int warp = 32;
 constexpr int max_num_warp = 20; // This comes from the max number of threads and blocks executable in parallel on the gpu considering the total number of pixel (10816 / 16) / 32
-
+int granularity = 4;
 
 int main() {
 
@@ -45,8 +45,8 @@ int main() {
     constexpr int num_test_images_to_select = 1;
 
     // Specify the file paths of the MNIST dataset
-    std::string test_images_file = "t10k-images-idx3-ubyte.gz";
-    std::string test_labels_file = "t10k-labels-idx1-ubyte.gz";
+    std::string test_images_file = "../data/t10k-images-idx3-ubyte.gz";
+    std::string test_labels_file = "../data/t10k-labels-idx1-ubyte.gz";
 
     // Read the MNIST images
     image3D X_test = read_mnist_images(test_images_file);
@@ -59,9 +59,9 @@ int main() {
     }
 
     // Load pre-trained weights, biases, and kernels
-    image2D flattened_kernels_1 = read_csv("kernels_training.csv");
-    image2D weights = read_csv("weights_training.csv");
-    image1D biases = read_csv_image1D("biases_training.csv");
+    image2D flattened_kernels_1 = read_csv("../data/kernels_training.csv");
+    image2D weights = read_csv("../data/weights_training.csv");
+    image1D biases = read_csv_image1D("../data/biases_training.csv");
     image3D kernels = reshape_to_3d(flattened_kernels_1, output_channels, kernel_size);
     image1D flattened_kernels = convert_to_flattened_input(kernels);
 
@@ -90,8 +90,8 @@ int main() {
 
 		for (int num_warps = 1; num_warps < (max_num_warp + 1); ++num_warps) {
 			int num_blocks = static_cast<int>(ceil(static_cast<double>(image_pixels) / (warp * num_warps)));
-				printf("image_pixels = %d, warp = %d, num_warps = %d, num_blocks = %d\n", image_pixels, warp, num_warps, num_blocks);
-			    ConvolutionResult result = conv_forward_prop(batch_test[i], dev_flattened_kernels, kernel_size, output_channels, num_blocks, (num_warps*warp));
+				//printf("image_pixels = %d, warp = %d, num_warps = %d, num_blocks = %d\n", image_pixels, warp, num_warps, num_blocks);
+                ConvolutionResult result = conv_forward_prop(batch_test[i], dev_flattened_kernels, kernel_size, output_channels, num_blocks, warp, granularity);
 				image3D conv_output = result.conv_output;
 				float milliseconds = result.milliseconds;
 				executionTimes.push_back(milliseconds);
@@ -111,11 +111,11 @@ int main() {
 
     cudaFree(dev_flattened_kernels);
 
-    std::string csvFilePath = "execution_times.csv";
+    std::string csvFilePath = "../data/execution_times.csv";
     saveExecutionTimesToCSV(executionTimes, csvFilePath);
 
-    //double accuracy = static_cast<double>(correct_predictions) / X_test.size() * 100.0;
-    //std::cout << "Test accuracy: " << accuracy << "%" << std::endl;
+    // double accuracy = static_cast<double>(correct_predictions) / X_test.size() * 100.0;
+    // std::cout << "Test accuracy: " << accuracy << "%" << std::endl;
 
     return 0;
 }

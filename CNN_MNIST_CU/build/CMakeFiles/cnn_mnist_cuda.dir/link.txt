@@ -1,0 +1,1 @@
+/usr/bin/g++  CMakeFiles/cnn_mnist_cuda.dir/scr/cnn_inference.cu.o CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o -o cnn_mnist_cuda  -L"/usr/local/cuda/targets/aarch64-linux/lib/stubs" -L"/usr/local/cuda/targets/aarch64-linux/lib" -lcudadevrt -lcudart_static -lrt -lpthread -ldl

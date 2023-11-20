@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "ConvolutionLayer.cu"
-#include "Image.h"
-#include "Functions.h"
+#include "../scr/ConvolutionLayer.cu"
+#include "../scr/Image.h"
+#include "../scr/Functions.h"
 #include <vector>
 #include <iomanip>
 #include <chrono>
@@ -40,9 +40,7 @@ int main() {
     std::vector<float> executionTimes;
 
     // Create a 3D vector to represent the kernel
-    std::vector<std::vector<std::vector<double>>> kernel(num_channels,
-                                                         std::vector<std::vector<double>>(kernel_size,
-                                                           std::vector<double>(kernel_size, 0.0)));
+    image3D kernel(num_channels, image2D(kernel_size, image1D(kernel_size, 0.0)));
 
     // Initialize the kernel with some values
     double nums = 0.0;

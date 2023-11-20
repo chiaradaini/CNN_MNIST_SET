@@ -1,0 +1,4 @@
+/home/nvidia/CNN_MNIST_CU/build/CMakeFiles/rebuild_cache.dir
+/home/nvidia/CNN_MNIST_CU/build/CMakeFiles/edit_cache.dir
+/home/nvidia/CNN_MNIST_CU/build/CMakeFiles/test.dir
+/home/nvidia/CNN_MNIST_CU/build/CMakeFiles/cnn_mnist_cuda.dir

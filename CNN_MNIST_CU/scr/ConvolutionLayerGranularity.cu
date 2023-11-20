@@ -42,27 +42,22 @@ __global__ void convolution(const double* input,
                 int remainder = c_output % (output_h * output_w);
                 int w = remainder % (output_w);
                 int h = remainder / (output_w);
-                printf("c = %d, g = %d, c_output = %d, c_channel = %d, remainder = %d, w = %d, h = %d\n", c, g, c_output, c_channel, remainder, w, h);
 
                 for (int i = 0; i < kernel_size; ++i) {
                     for (int j = 0; j < kernel_size; ++j) {
                         for (int k = 0; k < input_channels; ++k) {
-                            // Calculate input and kernel indices correctly
                             int input_idx = (h + i) * input_w * input_channels + (w + j) * input_channels + k;
                             int kernel_idx = c_channel * (kernel_size * kernel_size * input_channels) + i * (kernel_size * input_channels) + j * input_channels + k;
 
                             double input_pixel = input[input_idx];
                             double kernel_value = kernels[kernel_idx];
                             sum += input_pixel * kernel_value;
-                            printf("c_output = %d, i = %d, j = %d, k = %d, input_idx = %d, input_pixel = %f, kernel_idx = %d, kernel_value = %f, sum = %f\n", c_output, i, j, k, input_idx, input_pixel, kernel_idx, kernel_value, sum);
                         }
                     }
                 }
-                printf("c_output = %d, sum = %f\n", c_output, sum);
                 // unsigned long micro_add = (end_add - start_add) * 1000000 / CLOCKS_PER_SEC;
                 // printf("start = %llu, end = %llu, elapsed time = %llu [micro s]\n", start_add, end_add, micro_add);
                 conv_output[c_output] = sum;
-                //conv_output[c] = sum;
             }
         }
     }
