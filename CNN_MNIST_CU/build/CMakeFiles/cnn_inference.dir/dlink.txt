@@ -1,1 +1,0 @@
-/usr/local/cuda/bin/nvcc   -Xcompiler=-fPIC -Wno-deprecated-gpu-targets -shared -dlink CMakeFiles/ConvolutionLib.dir/scr/cnn_inference.cu.o CMakeFiles/ConvolutionLib.dir/scr/Convolution.cu.o -o CMakeFiles/cnn_inference.dir/cmake_device_link.o 

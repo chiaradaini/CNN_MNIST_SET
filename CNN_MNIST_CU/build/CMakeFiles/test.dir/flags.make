@@ -7,11 +7,11 @@ CUDA_FLAGS =
 
 CUDA_DEFINES = 
 
-CUDA_INCLUDES = -I/home/nvidia/CNN_MNIST_CU/inc 
+CUDA_INCLUDES = -I/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc 
 
 CXX_FLAGS =  
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/nvidia/CNN_MNIST_CU/inc -I/usr/local/cuda/include 
+CXX_INCLUDES = -I/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc -I/usr/local/cuda/include 
 
