@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/nvidia/CNN_MNIST/CNN_MNIST_CU/src/Functions.cpp" "/home/nvidia/CNN_MNIST/CNN_MNIST_CU/build/CMakeFiles/test.dir/src/Functions.cpp.o"
+  "/home/nvidia/CNN_MNIST/CNN_MNIST_CU/tests/test.cpp" "/home/nvidia/CNN_MNIST/CNN_MNIST_CU/build/CMakeFiles/test.dir/tests/test.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

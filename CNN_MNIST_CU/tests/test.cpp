@@ -70,7 +70,7 @@ int main() {
     double* dev_flattened_kernels = nullptr;
     AllocateAndCopyMemory(&dev_flattened_kernels, flattened_kernels.data(), flattened_kernels.size());
     assert(dev_flattened_kernels != nullptr);
-    
+
     int numBlocks =1;
     int numThreads = 32;
     int granularity = 2;

@@ -31,7 +31,7 @@ enable_language(CUDA)
 find_package(CUDA REQUIRED)
 
 set(SOURCES
-    tests/test.cu
+    tests/test.cpp
     src/Convolution.cu
     src/Functions.cpp
     src/memory_allocation.cu

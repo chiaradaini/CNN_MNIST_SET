@@ -4,12 +4,9 @@
 #include "memory_allocation.h"
 
 void AllocateAndCopyMemory(double** dev_flattened_kernels, const double* flattened_kernels, size_t size) {
-    
     cudaMalloc((void**)dev_flattened_kernels, size * sizeof(double));
-    cudaMemcpy(*dev_flattened_kernels, flattened_kernels, size * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_flattened_kernels, flattened_kernels, size * sizeof(double), cudaMemcpyHostToDevice);
 
-    // Check for errors
-	// cudaDeviceSynchronize();
     if (cudaGetLastError() != cudaSuccess) {
         std::cout << "Error copying memory to GPU: " << cudaGetErrorString(cudaGetLastError()) << std::endl;
     } else {
@@ -19,7 +16,7 @@ void AllocateAndCopyMemory(double** dev_flattened_kernels, const double* flatten
 
 void FreeMemory(double* dev_ptr) {
     cudaError_t cudaStatus = cudaFree(dev_ptr);
-    
+
     if (cudaStatus != cudaSuccess) {
         std::cout << "Error freeing GPU memory: " << cudaGetErrorString(cudaStatus) << std::endl;
     } else {
