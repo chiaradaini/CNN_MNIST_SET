@@ -3,13 +3,13 @@
 #include <iostream>
 #include "memory_allocation.h"
 
-void AllocateAndCopyMemory(double* dev_flattened_kernels, const double* flattened_kernels, size_t size) {
+void AllocateAndCopyMemory(double** dev_flattened_kernels, const double* flattened_kernels, size_t size) {
     
-    cudaMalloc((void**)&dev_flattened_kernels, size * sizeof(double));
-    cudaMemcpy(dev_flattened_kernels, flattened_kernels, size * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMalloc((void**)dev_flattened_kernels, size * sizeof(double));
+    cudaMemcpy(*dev_flattened_kernels, flattened_kernels, size * sizeof(double), cudaMemcpyHostToDevice);
 
     // Check for errors
-    cudaDeviceSynchronize();
+	// cudaDeviceSynchronize();
     if (cudaGetLastError() != cudaSuccess) {
         std::cout << "Error copying memory to GPU: " << cudaGetErrorString(cudaGetLastError()) << std::endl;
     } else {
