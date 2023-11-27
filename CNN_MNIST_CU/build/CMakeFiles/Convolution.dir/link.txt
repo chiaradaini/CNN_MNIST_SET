@@ -1,0 +1,1 @@
+/usr/bin/g++  CMakeFiles/Convolution.dir/scr/Convolution.cu.o -o Convolution  -L"/usr/local/cuda/targets/aarch64-linux/lib/stubs" -L"/usr/local/cuda/targets/aarch64-linux/lib" -lcudadevrt -lcudart_static -lrt -lpthread -ldl
