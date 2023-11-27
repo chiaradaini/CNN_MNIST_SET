@@ -79,6 +79,7 @@ cnn_mnist_cuda_EXTERNAL_OBJECTS =
 
 CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o: CMakeFiles/cnn_mnist_cuda.dir/scr/cnn_inference.cu.o
 CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o: CMakeFiles/cnn_mnist_cuda.dir/build.make
+CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o: libconvolution_lib.a
 CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o: CMakeFiles/cnn_mnist_cuda.dir/dlink.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nvidia/CNN_MNIST_CU/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CUDA device code CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cnn_mnist_cuda.dir/dlink.txt --verbose=$(VERBOSE)
@@ -97,6 +98,7 @@ cnn_mnist_cuda_EXTERNAL_OBJECTS =
 
 cnn_mnist_cuda: CMakeFiles/cnn_mnist_cuda.dir/scr/cnn_inference.cu.o
 cnn_mnist_cuda: CMakeFiles/cnn_mnist_cuda.dir/build.make
+cnn_mnist_cuda: libconvolution_lib.a
 cnn_mnist_cuda: CMakeFiles/cnn_mnist_cuda.dir/cmake_device_link.o
 cnn_mnist_cuda: CMakeFiles/cnn_mnist_cuda.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nvidia/CNN_MNIST_CU/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CUDA executable cnn_mnist_cuda"

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "ConvolutionLayer.h"
-#include "Functions.h"
+#include "../scr/ConvolutionLayer.cu"
+#include "../inc/Functions.h"
 
 // Define the CNN architecture
 constexpr int kernel_size = 3;

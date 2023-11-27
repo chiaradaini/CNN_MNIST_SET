@@ -78,17 +78,6 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-
-.PHONY : test/fast
-
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/nvidia/CNN_MNIST_CU/build/CMakeFiles /home/nvidia/CNN_MNIST_CU/build/CMakeFiles/progress.marks
@@ -122,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named cnn_mnist_cuda
+# Target rules for targets named test
 
 # Build rule for target.
-cnn_mnist_cuda: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 cnn_mnist_cuda
-.PHONY : cnn_mnist_cuda
+test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test
+.PHONY : test
 
 # fast build rule for target.
-cnn_mnist_cuda/fast:
-	$(MAKE) -f CMakeFiles/cnn_mnist_cuda.dir/build.make CMakeFiles/cnn_mnist_cuda.dir/build
-.PHONY : cnn_mnist_cuda/fast
+test/fast:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
 
-scr/cnn_inference.o: scr/cnn_inference.cu.o
+src/Functions.o: src/Functions.cpp.o
 
-.PHONY : scr/cnn_inference.o
+.PHONY : src/Functions.o
 
 # target to build an object file
-scr/cnn_inference.cu.o:
-	$(MAKE) -f CMakeFiles/cnn_mnist_cuda.dir/build.make CMakeFiles/cnn_mnist_cuda.dir/scr/cnn_inference.cu.o
-.PHONY : scr/cnn_inference.cu.o
+src/Functions.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/Functions.cpp.o
+.PHONY : src/Functions.cpp.o
 
-scr/cnn_inference.i: scr/cnn_inference.cu.i
+src/Functions.i: src/Functions.cpp.i
 
-.PHONY : scr/cnn_inference.i
+.PHONY : src/Functions.i
 
 # target to preprocess a source file
-scr/cnn_inference.cu.i:
-	$(MAKE) -f CMakeFiles/cnn_mnist_cuda.dir/build.make CMakeFiles/cnn_mnist_cuda.dir/scr/cnn_inference.cu.i
-.PHONY : scr/cnn_inference.cu.i
+src/Functions.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/Functions.cpp.i
+.PHONY : src/Functions.cpp.i
 
-scr/cnn_inference.s: scr/cnn_inference.cu.s
+src/Functions.s: src/Functions.cpp.s
 
-.PHONY : scr/cnn_inference.s
+.PHONY : src/Functions.s
 
 # target to generate assembly for a file
-scr/cnn_inference.cu.s:
-	$(MAKE) -f CMakeFiles/cnn_mnist_cuda.dir/build.make CMakeFiles/cnn_mnist_cuda.dir/scr/cnn_inference.cu.s
-.PHONY : scr/cnn_inference.cu.s
+src/Functions.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/Functions.cpp.s
+.PHONY : src/Functions.cpp.s
 
 # Help Target
 help:
@@ -170,10 +159,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... test"
-	@echo "... cnn_mnist_cuda"
-	@echo "... scr/cnn_inference.o"
-	@echo "... scr/cnn_inference.i"
-	@echo "... scr/cnn_inference.s"
+	@echo "... src/Functions.o"
+	@echo "... src/Functions.i"
+	@echo "... src/Functions.s"
 .PHONY : help
 
 

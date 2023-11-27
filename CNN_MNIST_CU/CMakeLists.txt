@@ -1,23 +1,47 @@
-cmake_minimum_required(VERSION 3.10)
+# cmake_minimum_required(VERSION 3.12)
 
-project(CNN_MNIST_CUDA LANGUAGES CUDA)
+# project(CNN_INFERENCE)
 
-option(DEBUG "Enable debugging" ON)
+# enable_language(CUDA)
 
-set(CMAKE_CUDA_ARCHITECTURES 61)  # Adjust based on your GPU's compute capability
+# find_package(CUDA REQUIRED)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(SOURCES
+#     src/cnn_inference.cpp
+#     src/Convolution.cu
+#     src/Functions.cpp
+#     src/memory_allocation.cu
+# )
 
-enable_testing()
+# # you need to set this according to your nvidia architecture
+# set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-arch=compute_72;-code=sm_72)
 
-include_directories("/scr")
+# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
+# cuda_add_executable(cnn_inference ${SOURCES})
+
+# target_link_libraries(cnn_inference ${CUDA_LIBRARIES})
+
+cmake_minimum_required(VERSION 3.12)
+
+project(CNN_INFERENCE)
+
+enable_language(CUDA)
+
+find_package(CUDA REQUIRED)
 
 set(SOURCES
-    scr/cnn_inference.cu
+    tests/test.cu
+    src/Convolution.cu
+    src/Functions.cpp
+    src/memory_allocation.cu
 )
-# Assuming cnn_inference.cu is in the src directory
-add_executable(cnn_mnist_cuda ${SOURCES})
 
-# Specify CUDA-specific flags
-set_target_properties(cnn_mnist_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+# you need to set this according to your nvidia architecture
+set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-arch=compute_72;-code=sm_72)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
+cuda_add_executable(test ${SOURCES})
+
+target_link_libraries(test ${CUDA_LIBRARIES})

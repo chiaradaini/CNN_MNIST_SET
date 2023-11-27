@@ -15,6 +15,7 @@ set(CMAKE_CUDA_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/nvidia/CNN_MNIST_CU/build/CMakeFiles/convolution_lib.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
