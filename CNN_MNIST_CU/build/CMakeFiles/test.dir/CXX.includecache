@@ -57,14 +57,6 @@ vector
 -
 cmath
 -
-../inc/Convolution.h
-/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/Convolution.h
-../inc/memory_allocation.h
-/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/memory_allocation.h
-../inc/Image.h
-/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/Image.h
-../inc/Functions.h
-/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/Functions.h
 vector
 -
 iomanip
@@ -79,6 +71,14 @@ iomanip
 -
 cassert
 -
+../inc/Convolution.h
+/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/Convolution.h
+../inc/memory_allocation.h
+/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/memory_allocation.h
+../inc/Image.h
+/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/Image.h
+../inc/Functions.h
+/home/nvidia/CNN_MNIST/CNN_MNIST_CU/inc/Functions.h
 
 /usr/local/cuda/include/builtin_types.h
 device_types.h

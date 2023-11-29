@@ -52,12 +52,13 @@ __global__ void convolution(const double* input,
                             double input_pixel = input[input_idx];
                             double kernel_value = kernels[kernel_idx];
                             sum += input_pixel * kernel_value;
+                            //printf("c_output = %d, i = %d, j = %d, k = %d, input_idx = %d, input_pixel = %f, kernel_idx = %d, kernel_value = %f, sum = %f\n", c_output, i, j, k, input_idx, input_pixel, kernel_idx, kernel_value, sum);
+
                         }
                     }
                 }
                 // unsigned long micro_add = (end_add - start_add) * 1000000 / CLOCKS_PER_SEC;
                 // printf("start = %llu, end = %llu, elapsed time = %llu [micro s]\n", start_add, end_add, micro_add);
-                printf("c_out = %d, cum = %f\n", c_output, sum);
                 conv_output[c_output] = sum;
             }
         }
@@ -83,25 +84,25 @@ ConvolutionResult conv_forward_prop(const image3D& input, const double* dev_kern
 
     cudaMemcpy(dev_flattened_input, flattened_input.data(), flattened_input.size() * sizeof(double), cudaMemcpyHostToDevice);
 
-    // cudaEvent_t start, stop;
-    // CUDA_CHECK(cudaEventCreate(&start));
-    // CUDA_CHECK(cudaEventCreate(&stop));
+    cudaEvent_t start, stop;
+    CUDA_CHECK(cudaEventCreate(&start));
+    CUDA_CHECK(cudaEventCreate(&stop));
 
-    // CUDA_CHECK(cudaEventRecord(start));
+    CUDA_CHECK(cudaEventRecord(start));
 
     convolution<<<numBlocks, numThreads>>>(dev_flattened_input, dev_kernels, kernel_size,
                                                 input_h, input_w, output_h, output_w, input_channels, output_channels, granularity, dev_conv_output);
 
 
-    // CUDA_CHECK(cudaEventRecord(stop));
-    // CUDA_CHECK(cudaEventSynchronize(stop));
+    CUDA_CHECK(cudaEventRecord(stop));
+    CUDA_CHECK(cudaEventSynchronize(stop));
 
     float milliseconds = 0.0;
-    // CUDA_CHECK(cudaEventElapsedTime(&milliseconds, start, stop));
+    CUDA_CHECK(cudaEventElapsedTime(&milliseconds, start, stop));
     //printf("Kernel execution time: %.2f ms\n", milliseconds);
 
-    // cudaEventDestroy(start);
-    // cudaEventDestroy(stop);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 
     cudaDeviceSynchronize();
 
